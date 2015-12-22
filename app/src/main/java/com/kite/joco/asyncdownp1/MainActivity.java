@@ -35,14 +35,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        pbLetolt = (ProgressBar) findViewById(R.id.pbLetolt);
+        //pbLetolt = (ProgressBar) findViewById(R.id.pbLetolt);
         tvElsoment = (TextView) findViewById(R.id.tvElsoment);
         tvUtolsoment = (TextView) findViewById(R.id.tvUtolsoment);
 
     }
 
     public void letoltClck(View v) {
-        new AsnycLetolt().execute(0);
+        // new AsnycLetolt().execute(0);
         download();
     }
 
@@ -52,12 +52,22 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setIndeterminate(true);
         progressDialog.setProgress(0);
-        progressDialog.setMax(500);
+        progressDialog.setCancelable(true);
+        int max = 800000;
+        int k = 0;
+        progressDialog.setMax(max);
         progressDialog.show();
 
+        while (k < max) {
+            Log.i(" A K értéke", " " + k);
+            k += 10;
+            progressDialog.setProgress(k);
+        }
+        Log.i("LOGTAG","Most kell kilépnie");
+        //progressDialog.dismiss();
 
 
-        final Thread t = new Thread() {
+        /*final Thread t = new Thread() {
             @Override
             public void run() {
                 int jumptime = 0;
@@ -75,26 +85,25 @@ public class MainActivity extends AppCompatActivity {
                 progressDialog.dismiss();
             }
         };
-                t.start();
+                t.start();*/
     }
 
 
+    class AsnycLetolt extends AsyncTask<Integer, Integer, String> {
 
-class AsnycLetolt extends AsyncTask<Integer, Integer, String> {
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        Log.i("LOGPREEXECUTE", "started");
-        Calendar c = Calendar.getInstance(new Locale("HU"));
-        Date d = c.getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("hh-mm-ss");
-        tvElsoment.setText("Az első mentése ideje: " + sdf.format(d));
-    }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.i("LOGPREEXECUTE", "started");
+            Calendar c = Calendar.getInstance(new Locale("HU"));
+            Date d = c.getTime();
+            SimpleDateFormat sdf = new SimpleDateFormat("hh-mm-ss");
+            tvElsoment.setText("Az első mentése ideje: " + sdf.format(d));
+        }
 
 
-    @Override
-    protected String doInBackground(Integer... params) {
+        @Override
+        protected String doInBackground(Integer... params) {
             /*ServiceGen.get().getAsyncListofPartner(new Callback<List<Partner>>() {
                 @Override
                 public void success(List<Partner> partners, Response response) {
@@ -113,32 +122,32 @@ class AsnycLetolt extends AsyncTask<Integer, Integer, String> {
                 }
             });*/
 
-        List<Partner> partners = ServiceGen.get().getSyncListOfPartner();
+            List<Partner> partners = ServiceGen.get().getSyncListOfPartner();
 
-        SugarRecord.saveInTx(partners);
-        //pbLetolt.setMax(partners.size());
-        for (int i = 0; i < partners.size(); i++) {
-            publishProgress(i);
+            SugarRecord.saveInTx(partners);
+            //pbLetolt.setMax(partners.size());
+            for (int i = 0; i < partners.size(); i++) {
+                publishProgress(i);
+            }
+
+            return "";
         }
 
-        return "";
-    }
-
-    @Override
-    protected void onProgressUpdate(Integer... values) {
-        super.onProgressUpdate(values);
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
 //        pbLetolt.setProgress(values[0]);
-    }
+        }
 
-    @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
-        Log.i("LOGPOSTEXECUTE", "started");
-        Calendar c = Calendar.getInstance(new Locale("HU"));
-        Date d = c.getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("hh-mm-ss");
-        tvUtolsoment.setText("Az utolsó mentése ideje: " + sdf.format(d));
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            Log.i("LOGPOSTEXECUTE", "started");
+            Calendar c = Calendar.getInstance(new Locale("HU"));
+            Date d = c.getTime();
+            SimpleDateFormat sdf = new SimpleDateFormat("hh-mm-ss");
+            tvUtolsoment.setText("Az utolsó mentése ideje: " + sdf.format(d));
+        }
     }
-}
 
 }
