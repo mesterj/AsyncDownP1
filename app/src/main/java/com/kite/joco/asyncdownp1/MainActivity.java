@@ -2,6 +2,7 @@ package com.kite.joco.asyncdownp1;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,7 +19,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Handler;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar pbLetolt;
     TextView tvElsoment, tvUtolsoment;
     private ProgressDialog progressDialog;
-    //private Handler progressBarHandler = new Handler() ;
+    Handler progressBarHandler = new Handler() ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             k += 10;
             progressDialog.setProgress(k);
         }
-        Log.i("LOGTAG","Most kell kilépnie");
+        Log.i("LOGTAG", "Most kell kilépnie");
         //progressDialog.dismiss();
 
 
